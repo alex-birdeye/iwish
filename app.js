@@ -62,7 +62,7 @@ app.use(function (err, req, res, next) {
 
 
 var rawHtml = "Xyz <script language= javascript>var foo = '<<bar>>';< /  script><!--<!-- Waah! -- -->";
-http.get('http://olx.ua/i2/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kvartir/kiev/', function (res) {
+http.get('http://olx.ua/i2/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kvartir/kiev/?page=10', function (res) {
     //console.log('STATUS: ' + res.statusCode);
     //console.log('HEADERS: ' + JSON.stringify(res.headers));
 
@@ -75,13 +75,15 @@ http.get('http://olx.ua/i2/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kva
         var body = Buffer.concat(bodyChunks);
         $ = cheerio.load(body);
         var flats = $('.titlebox');
-        //for (var i in flats) {
-            //if (i < flats.length)
-            //    console.log(flats[i].children[0].next.children[0].data.trim());
-
-            console.log(flats[0].children[1]);
+        for (var i in flats) {
+            if (i < flats.length) {
+                //        console.log(flats[0].children[0].next.children[0].data.trim());
+                console.log('======================= # ' + i + ' ==========================');
+                console.log($('.titlebox .price')[i].children[0].data.trim());
+                console.log($('.titlebox .title')[i].children[0].data.trim());
+            }
             //console.log(flats[0].children[0]);
-        //}
+        }
 
         //console.log($('.titlebox > .price').text());
 
