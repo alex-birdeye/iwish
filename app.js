@@ -9,10 +9,7 @@ var htmlparser = require("htmlparser");
 var http = require("http");
 var cheerio = require('cheerio');
 var mongojs = require('mongojs');
-//var db = mongojs('user:1qaz\\@WSX3edc@40.74.48.227/TestDb', ['Orders2']);
-//db.Orders2.find({}, function(err, docs){
-//    console.log(docs);
-//});
+var db = mongojs('qwerty:qwerty@40.74.48.227/TestDb', ['Orders2', 'kvartiry']);
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -97,8 +94,13 @@ http.get('http://olx.ua/i2/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kva
                 //console.log(i + ' ' + dataNinjaJson);
                 console.log(dataNinjaJson.creationDate);
                 console.log()
+                db.kvartiry.insert({price: price, title: title, date: dataNinjaJson.creationDate}, function(err, docs){
+                });
             }
         }
+        db.kvartiry.find({}, function(err, docs){
+            console.log(docs);
+        });
 
         //var flats = $('.titlebox');
         //for (var i in flats) {
