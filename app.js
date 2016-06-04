@@ -8,6 +8,11 @@ var bodyParser = require('body-parser');
 var htmlparser = require("htmlparser");
 var http = require("http");
 var cheerio = require('cheerio');
+var mongojs = require('mongojs');
+//var db = mongojs('user:1qaz\\@WSX3edc@40.74.48.227/TestDb', ['Orders2']);
+//db.Orders2.find({}, function(err, docs){
+//    console.log(docs);
+//});
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -62,7 +67,7 @@ app.use(function (err, req, res, next) {
 
 
 var rawHtml = "Xyz <script language= javascript>var foo = '<<bar>>';< /  script><!--<!-- Waah! -- -->";
-http.get('http://olx.ua/i2/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kvartir/kiev/?page=10', function (res) {
+http.get('http://olx.ua/i2/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kvartir/kiev/?page=1', function (res) {
     //console.log('STATUS: ' + res.statusCode);
     //console.log('HEADERS: ' + JSON.stringify(res.headers));
 
@@ -74,16 +79,40 @@ http.get('http://olx.ua/i2/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kva
     }).on('end', function () {
         var body = Buffer.concat(bodyChunks);
         $ = cheerio.load(body);
-        var flats = $('.titlebox');
-        for (var i in flats) {
-            if (i < flats.length) {
-                //        console.log(flats[0].children[0].next.children[0].data.trim());
-                console.log('======================= # ' + i + ' ==========================');
-                console.log($('.titlebox .price')[i].children[0].data.trim());
-                console.log($('.titlebox .title')[i].children[0].data.trim());
+
+        //var notPromoted = $("li.item").not('.promoted');
+        var notPromoted = $("li.item").not('.promoted');
+        //console.log('not promoted: ' + notPromoted[0]);
+
+        for (var i in notPromoted) {
+            if (i < notPromoted.length) {
+                //        console.log(notPromoted[0])
+                var dataNinja = notPromoted[i].attribs['data-ninja']
+                var price = notPromoted[i].children[0].next.children[0].next.children[0].next.children[5].children[1].children[0].data.trim();
+                console.log('price: ' + price);
+                var title = notPromoted[i].children[0].next.children[0].next.children[0].next.children[5].children[7].children[0].data.trim();
+                console.log('title: ' + title);
+                //console.log(i + ' ' + dataNinja);s
+                var dataNinjaJson = JSON.parse(unescape(dataNinja))
+                //console.log(i + ' ' + dataNinjaJson);
+                console.log(dataNinjaJson.creationDate);
+                console.log()
             }
-            //console.log(flats[0].children[0]);
         }
+
+        //var flats = $('.titlebox');
+        //for (var i in flats) {
+        //    if (i < flats.length) {
+        //                console.log(flats[0]);
+        //        console.log('======================= # ' + i + ' ==========================');
+        //        console.log($('.titlebox .price')[i].children[0].data.trim());
+        //        console.log($('.titlebox .title')[i].children[0].data.trim());
+        //        console.log($('.titlebox .date')[i].children[0].data.trim());
+        //    }
+        //    //console.log(flats[0].children[0]);
+        //}
+        //console.log();
+        //console.log('' + body);
 
         //console.log($('.titlebox > .price').text());
 
